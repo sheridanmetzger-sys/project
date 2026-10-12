@@ -1,0 +1,9 @@
+#!/bin/sh
+# Strip Claude attribution trailers from the commit message before the commit is recorded.
+# Enable with: git config core.hooksPath .githooks
+msg_file="$1"
+tmp="$msg_file.tmp"
+grep -v -i -E '^(Co-Authored-By: Claude.*<noreply@anthropic\.com>|Claude-Session: https://claude\.ai/.*|.*Generated with \[?Claude Code\]?.*)$' "$msg_file" > "$tmp"
+# Drop trailing blank lines left behind by the removed trailers.
+sed -e :a -e '/^\n*$/{$d;N;ba' -e '}' "$tmp" > "$msg_file"
+rm -f "$tmp"
